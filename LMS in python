@@ -1,0 +1,75 @@
+from datetime import datetime
+
+
+class Library:
+    def __init__(self, listOfBooks):
+        self.books = listOfBooks
+
+    def displayAvailableBooks(self):
+        print("Books present in this library are: ")
+        for book in self.books:
+            print(" *" + book)
+
+    def borrowBook(self, bookName):
+        if bookName in self.books:
+            print(f"You have been issued {bookName}. Please keep it safe and return within 7 days.")
+            self.books.remove(bookName)
+        else:
+            print("Sorry, this book is either not available or has already been issued to someone else. Please wait until the book is available.")
+            return False
+
+    def returnBook(self, bookName):
+        self.books.append(bookName)
+        print("Thanks for returning this book! Hope you enjoyed reading it. Have a great day ahead!")
+        due_date_str = input("Enter the due date (YYYY-MM-DD): ")
+        late_fee_per_day = 2.0
+
+        due_date = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+        return_date = datetime.now().date()
+        days_late = (return_date - due_date).days
+
+        if days_late <= 0:
+            print("No late fee. The book was returned on time.")
+        else:
+            late_fee = self.calculate_late_fee(days_late, late_fee_per_day)
+            print(f"The book is {days_late} day(s) late.")
+            print(f"Late fee: ₹{late_fee:.2f}")
+
+    def calculate_late_fee(self, days_late, late_fee_per_day):
+        return days_late * late_fee_per_day
+
+
+class Student:
+    def requestBook(self):
+        self.book = input("Enter the name of the book you want to borrow: ")
+        return self.book
+
+    def returnBook(self):
+        self.book = input("Enter the name of the book you want to return: ")
+        return self.book
+
+
+if __name__ == "__main__":
+    centralLibrary = Library(["Algorithms", "django", "Clrs", "Python Notes"])
+    student = Student()
+    centralLibrary.displayAvailableBooks()
+    while True:
+        welcomeMsg = '''Welcome to the Library of KJSCE
+        Please choose an option:
+        1. Listing all the books
+        2. Request a Book
+        3. Add/Return a Book
+        4. Exit the Library'''
+        print(welcomeMsg)
+        a = int(input("Enter a choice: "))
+        if a == 1:
+            centralLibrary.displayAvailableBooks()
+        elif a == 2:
+            centralLibrary.borrowBook(student.requestBook())
+        elif a == 3:
+            centralLibrary.returnBook(student.returnBook())
+        elif a == 4:
+            print("Thank you for using the library. Have a great day ahead!")
+            exit()
+        else:
+            print("Invalid Choice!")
